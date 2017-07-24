@@ -60,11 +60,11 @@
         ipv4_address: 172.16.100.100
   register: nginx
   
-- name: certbot
-  environment:
-    DOMAIN: "{{ domain }}"
-    EMAIL: "{{ email }}"
-  script: certbot.sh
+# - name: certbot
+#   environment:
+#     DOMAIN: "{{ domain }}"
+#     EMAIL: "{{ email }}"
+#   script: certbot.sh
   
 - name: nginx https server...
   template: src=secure.j2  dest=./nginx/data/etc/sites/secure.{{ domain }} owner=core group=core

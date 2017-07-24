@@ -1,0 +1,30 @@
+- name: copy init.sql...
+  copy: src=init.sql dest=~/init.sql
+
+- name: copy import.sh...
+  copy: src=import.sh dest=~/import.sh
+  
+- name: create mysql container...
+  docker_container:
+    name: shintech-mysql
+    image: mysql
+    command: mysqld --user=root --verbose
+    volumes:
+      - ./init.sql:/init.sql
+      - ./import.sh:/import.sh    
+    network_mode: bridge
+    state: started
+    restart: yes    
+    env:
+      MYSQL_DATABASE: "shintech"
+      MYSQL_USER: "mike"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"      
+    networks:
+      - name: "{{ network_name }}"      
+      
+- name: run script.sh...
+  script: create_db.sh
+  environment:
+    MYSQL_ROOT_PASSWORD: password

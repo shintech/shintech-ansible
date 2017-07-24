@@ -1,3 +1,4 @@
 - include: postgres.yml
+- include: mysql.yml
 - include: server-psql.yml
 - include: frontend.yml
