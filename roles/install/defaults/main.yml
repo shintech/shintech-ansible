@@ -1,0 +1,8 @@
+coreos_ansible_role_path: "{{playbook_dir}}/roles/install"
+coreos_ansible_install_pypy: true
+ansible_ssh_user: mike
+ansible_python_interpreter: "$HOME/bin/python"
+python_version: 2
+pypy_version: 8.1.1
+ansible_user: mike
+# inventory_hostname: dev.shintech.ninja

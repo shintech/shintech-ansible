@@ -1,0 +1,10 @@
+- name: create network...
+  docker_network:
+    name: "{{ network_name }}"
+    state: present
+    appends: yes
+    driver_options:
+      com.docker.network.bridge.name: shintech
+    ipam_options:
+      subnet: 172.16.100.0/24
+      gateway: 172.16.100.1

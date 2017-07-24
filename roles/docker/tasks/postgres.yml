@@ -1,0 +1,9 @@
+- name: build postgres container...
+  docker_container:
+    name: postgres
+    image: shintech/database
+    state: started
+    env_file: "{{ environment_file }}"
+    network_mode: bridge
+    networks:
+      - name: "{{ network_name }}"

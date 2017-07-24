@@ -1,0 +1,5 @@
+network_name: shintech
+environment_file: $HOME/docker.env
+domain: shintech.ninja
+ssl_key: /etc/letsencrypt/live/shintech.ninja/fullchain.pem
+ssl_crt: /etc/letsencrypt/live/shintech.ninja/privkey.pem

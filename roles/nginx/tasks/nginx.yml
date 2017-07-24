@@ -1,0 +1,73 @@
+- name: check if nginx directories needed...
+  raw: stat $HOME/nginx/data
+  register: nginx_directories
+  ignore_errors: True
+  changed_when: false
+  
+- name: create nginx directories...
+  become: yes
+  become_method: sudo
+  file: path=./nginx/data/etc/sites state=directory owner=core group=core
+  when: nginx_directories | failed
+
+- name: copy nginx.config...
+  become: yes
+  become_method: sudo
+  template: src={{ item.src }} dest={{ item.dest }} owner=core group=core
+  with_items:
+    - { src: nginx.j2,  dest: ./nginx/data/etc/nginx.conf }
+    - { src: certbot.j2,  dest: ./nginx/data/etc/certbot.conf }
+    - { src: mime.j2,  dest: ./nginx/data/etc/mime.types }
+    - { src: ssl.j2,  dest: ./nginx/data/etc/ssl.conf }
+    - { src: dhparam.j2, dest: ./nginx/data/etc/dhparam.pem }
+  
+- name: nginx http server...
+  template: src=site.j2  dest=./nginx/data/etc/sites/{{ domain }} owner=core group=core
+  
+- name: check if certbot directories needed...
+  raw: stat $HOME/certbot
+  register: certbot_directories
+  ignore_errors: True
+  changed_when: false
+  
+- name: create certbot directories...
+  file: path=./certbot/data/{{ item }} state=directory owner=core group=core
+  with_items:
+    - [var-lib, webroot, etc, log]
+  when: certbot_directories | failed
+  
+- name: build nginx container...
+  become: yes
+  become_user: core
+  docker_container:
+    name: nginx
+    image: nginx:latest
+    state: started
+    restart: yes
+    ports:
+      - "80:80"
+      - "443:443"
+    network_mode: bridge
+    volumes:
+      # nginx
+      - ./nginx/data/etc:/etc/nginx:ro
+      - ./nginx/data/log:/var/log/nginx
+      # certbot (SSL)
+      - ./certbot/data/webroot:/acme-challenge:ro
+      - ./certbot/data/etc:/etc/letsencrypt:ro
+    networks:
+      - name: "{{ network_name }}"
+        ipv4_address: 172.16.100.100
+  register: nginx
+  
+- name: certbot
+  environment:
+    DOMAIN: "{{ domain }}"
+    EMAIL: "{{ email }}"
+  script: certbot.sh
+  
+- name: nginx https server...
+  template: src=secure.j2  dest=./nginx/data/etc/sites/secure.{{ domain }} owner=core group=core
+  
+- name: nginx restart
+  shell: docker restart nginx

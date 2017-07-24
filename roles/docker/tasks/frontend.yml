@@ -1,0 +1,15 @@
+- name: build shintech-frontend container...
+  docker_container:
+    name: shintech-frontend
+    image: shintech/shintech-frontend
+    state: started
+    restart: yes
+    network_mode: bridge
+    env_file: "{{ environment_file }}"
+    env:
+      PORT: 8000
+    ports:
+      - "8000:8000"    
+    networks:
+      - name: "{{ network_name }}"
+      
