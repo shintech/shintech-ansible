@@ -1,0 +1,15 @@
+- name: build shintech-server-mysql container...
+  docker_container:
+    name: shintech-server-mysql
+    image: shintech/shintech-server-mysql
+    state: started
+    restart: yes
+    network_mode: bridge
+    env_file: "{{ environment_file }}"
+    env:
+      PORT: 55461
+    ports:
+      - "55461:55461"    
+    networks:
+      - name: "{{ network_name }}"
+      

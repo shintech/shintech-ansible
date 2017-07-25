@@ -11,20 +11,24 @@
     command: mysqld --user=root --verbose
     volumes:
       - ./init.sql:/init.sql
-      - ./import.sh:/import.sh    
+      - ./import.sh:/import.sh
     network_mode: bridge
     state: started
     restart: yes    
     env:
       MYSQL_DATABASE: "shintech"
-      MYSQL_USER: "mike"
+      MYSQL_USER: "core"
       MYSQL_PASSWORD: "password"
       MYSQL_ROOT_PASSWORD: "password"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"      
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports: 
+      - "3306:3306"
     networks:
-      - name: "{{ network_name }}"      
+      - name: "{{ network_name }}"
+  register: mysql
       
 - name: run script.sh...
   script: create_db.sh
   environment:
     MYSQL_ROOT_PASSWORD: password
+  when: mysql
