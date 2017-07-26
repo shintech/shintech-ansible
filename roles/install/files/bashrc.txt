@@ -1,0 +1,36 @@
+# /etc/skel/.bashrc
+#
+# This file is sourced by all *interactive* bash shells on startup,
+# including some apparently interactive shells such as scp and rcp
+# that can't tolerate any output.  So make sure this doesn't display
+# anything or bad things will happen !
+
+
+# Test for an interactive shell.  There is no need to set anything
+# past this point for scp and rcp, and it's important to refrain from
+# outputting anything in those cases.
+if [[ $- != *i* ]] ; then
+	# Shell is non-interactive.  Be done now!
+	return
+fi
+
+force_color_prompt=yes
+
+black="\[\033[00;30m\]"
+grey="\[\033[01;30m\]"
+light_blue="\[\033[01;34m\]"
+blue="\[\033[00;34m\]"
+dark_purple="\[\033[00;35m\]"
+light_purple="\[\033[01;35m\]"
+light_cyan="\[\033[01;36m\]"
+cyan="\[\033[00;36m\]"
+light_green="\[\033[01;32m\]"
+green="\[\033[00;32m\]"
+light_red="\[\033[01;31m\]"
+red="\[\033[00;31m\]"
+brown="\[\033[00;33m\]"
+yellow="\[\033[01;33m\]"
+white="\[\033[00;37m\]"
+
+#Replace PS1 Line
+PS1="${debian_chroot:+($debian_chroot)}$brown\u$cyan@$brown\h\n$cyan\w$red >$yellow>$green>$white "
