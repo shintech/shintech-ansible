@@ -1,0 +1,13 @@
+- name: build redis container...
+  docker_container:
+    name: redis
+    image: redis
+    state: started
+    restart: yes
+    network_mode: bridge
+    env_file: "{{ environment_file }}"
+    ports:
+      - "6379:6379"    
+    networks:
+      - name: "{{ network_name }}"
+      

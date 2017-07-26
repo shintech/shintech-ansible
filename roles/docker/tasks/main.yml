@@ -1,3 +1,7 @@
+- name: copy env file...
+  copy: src=docker.env dest=~/docker.env
+
+- include: redis.yml
 - include: postgres.yml
 - include: mysql.yml
 - include: server-psql.yml

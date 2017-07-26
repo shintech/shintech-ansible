@@ -19,6 +19,12 @@
   ignore_errors: True
   changed_when: false
 
+- name: create swap...
+  become: yes
+  become_method: sudo
+  script: swap.sh
+  when: need_bootstrap | failed
+  
 - name: copy pypy to temporary destination
   raw: "scp {{coreos_ansible_role_path}}/files/pypy.tar.bz2 {{ ansible_ssh_user }}@{{inventory_hostname}}:/tmp/pypy.tar.bz2"
   become: false
@@ -66,7 +72,6 @@
   register: need_docker
   ignore_errors: True
   changed_when: false
-  when: need_pip | failed
   
 - name: install docker-py...
   shell: "{{ansible_python_interpreter}} -m pip install docker"
@@ -77,14 +82,10 @@
   register: need_docker_compose
   ignore_errors: True
   changed_when: false
-  when: need_pip | failed
   
 - name: install docker-compose...
   shell: "{{ansible_python_interpreter}} -m pip install docker-compose"
   when: need_docker_compose | failed
-  
-- name: copy env file...
-  copy: src=docker.env dest=~/docker.env
   
 - name: Remove .bashrc...
   file: path=~/.bashrc state=absent
